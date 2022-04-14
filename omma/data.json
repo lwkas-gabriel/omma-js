@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "titulo": "Misto Quente",
+        "dificuldade": "Iniciante",
+        "ingredientes": ["teste", "teste", "teste", "teste"], 
+        "preparo": "aehuaheuaheuae", 
+        "url": "https://www.google.com.br",
+        "isVegano": "false"
+    }
+
+]
