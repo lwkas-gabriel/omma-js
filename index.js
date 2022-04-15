@@ -3,6 +3,15 @@ const fs = require("fs");
 const nomeEmpresa = "Sistema Omma";
 console.log(nomeEmpresa);
 
+const abrirBancoDeDados = () => {
+  const rawData = fs.readFileSync("data.json");
+  return JSON.parse(rawData);
+}
+
+const salvarBancoDeDados = (listaDeReceitas) => {
+  fs.writeFileSync("data.json", JSON.stringify(listaDeReceitas));
+}
+
 const cadastrarReceita = (
   // id,
   titulo,
@@ -12,8 +21,7 @@ const cadastrarReceita = (
   link,
   vegano
 ) => {
-  const rawData = fs.readFileSync("data.json");
-  const listaDeReceitas = JSON.parse(rawData);
+  
 
   const indiceUltimaReceita = listaDeReceitas.length - 1;
 
@@ -29,16 +37,14 @@ const cadastrarReceita = (
 
   listaDeReceitas.push(novaReceita);
 
-  fs.writeFileSync("data.json", JSON.stringify(listaDeReceitas));
+  salvarBancoDeDados(listaDeReceitas);
 
   // console.log("Cadastro da receita " + titulo + " feito com sucesso!");
   console.log(`Cadastro da receita ${titulo} feito com sucesso!`);
 };
 
 const exibirReceitas = () => {
-
-  const rawData = fs.readFileSync("data.json");
-  const listaDeReceitas = JSON.parse(rawData);
+  const listaDeReceitas = abrirBancoDeDados();
 
   if(listaDeReceitas.length === 0){
     console.log("Lista de receitas vazia!");
@@ -62,8 +68,7 @@ const exibirReceitas = () => {
 
 const deletarReceita = (id) => {
 
-  const rawData = fs.readFileSync("data.json");
-  const listaDeReceitas = JSON.parse(rawData);
+  const listaDeReceitas = abrirBancoDeDados();
 
   const indiceReceita = listaDeReceitas.findIndex((receita) => {
     return receita.id === id;
@@ -75,15 +80,14 @@ const deletarReceita = (id) => {
 
   listaDeReceitas.splice(indiceReceita, 1);
 
-  fs.writeFileSync("data.json", JSON.stringify(listaDeReceitas));
+  salvarBancoDeDados(listaDeReceitas);
   
   console.log("Receita deletada com sucesso!");
 };
 
 const buscarReceita = (termo) => {
 
-  const rawData = fs.readFileSync("data.json");
-  const listaDeReceitas = JSON.parse(rawData);
+  const listaDeReceitas = abrirBancoDeDados();
 
   return listaDeReceitas.filter((receita) => {
     return receita.titulo.toLowerCase().indexOf(termo.toLowerCase()) != -1;
@@ -103,16 +107,16 @@ const atualizarReceita = (id, receitaAtualizada = {}) => {
     return console.log("Receita não encontrada");
   }
 
+  const receitaOriginal = listaDeReceitas[indiceReceita]
+
   listaDeReceitas[indiceReceita] = {
-    ...listaDeReceitas[indiceReceita],
+    ...receitaOriginal,
     ...receitaAtualizada,
   };
 
   
-
+  salvarBancoDeDados(listaDeReceitas);
   console.log(`Receita "${listaDeReceitas[indiceReceita].titulo}" atualizada com sucesso!`);
-
-  fs.writeFileSync("data.json", JSON.stringify(listaDeReceitas));
 
 };
 
@@ -128,4 +132,4 @@ const atualizarReceita = (id, receitaAtualizada = {}) => {
 
 //exibirReceitas();
 
-atualizarReceita(2, {titulo: "Misto"});
+atualizarReceita(2, {vegano: "Misto"});
